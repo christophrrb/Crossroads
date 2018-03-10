@@ -26,8 +26,13 @@ class ArticleText : AsyncTask<Int, Void, String>() {
 		try {
 			new_url = (doc_string + article[iterate].child(0).child(0).child(0).child(0).child(0).child(0).attr("href"))
 		} catch (e: Exception) {
-			new_url = (doc_string + article[iterate].child(0).child(0).child(0).child(0).child(0).attr("href"))
+			try {
+				new_url = (doc_string + article[iterate].child(0).child(0).child(0).child(0).child(0).attr("href"))
+			} catch (e: Exception) {
+				new_url = (doc_string + article[iterate].child(0).child(0).child(1).child(0).child(0).attr("href"))
+			}
 		}
+
 		Log.e("URL", new_url)
 		Log.e("adapterPosition", "$iterate")
 

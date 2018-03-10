@@ -87,7 +87,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 					return directory.absolutePath
 				}
 
-				myActivity.putExtra("picture", saveToInternalStorage(images[adapterPosition]))
+				myActivity.putExtra("picture", saveToInternalStorage(images[adapterPosition - 1]))
 
 				v.getContext().startActivity(myActivity);
 			}
@@ -98,18 +98,28 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 	var images = Images().execute().get()
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
+
+		fun validTitle(title: String?): Boolean {
+			if (
+			/*Contains "hrs"*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.contains("hrs")) ||
+			/*Contains "hrs"*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals("DeKalb County lifts boil water advisory")) ||
+			/*Equals the string*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals("To view our latest e-Edition click the image on the left.")) ||
+			/*Already a listed title*/ (titles.contains(article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!)) ||
+			/*Empty Title*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals("")) ||
+			/*Empty Title*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals(null))
+			) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
 		//Titles
 		var createViewHolder = true
 		try {
 			if ((article.get()?.get(i)?.child(0)?.child(1)?.childNodeSize() == 11) || (article.get()?.get(i)?.child(0)?.child(1)?.childNodeSize() == 9)) {
-				if (
-					/*Contains "hrs"*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.contains("hrs")) ||
-					/*Equals the string*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals("To view our latest e-Edition click the image on the left.")) ||
-					/*Already a listed title*/ (titles.contains(article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!))
-//					/*Empty Title*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals("")) ||
-//					/*Empty Title*/ (article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.equals(null))
-					) {
-					//Start of if conditions
+				var title: String? = article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()
+				if (validTitle(title) == false) {
 					createViewHolder = false
 				} else {
 					var title: String? = article.get()?.get(i)?.child(0)?.child(1)?.child(1)?.child(0)?.child(0)?.text()?.trim()
@@ -127,13 +137,13 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 			}
 		} catch (e: IndexOutOfBoundsException) {
 //			try {
-//				if (article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.contains("hrs") || (titles.contains(article.get()?.get(i)?.child(0)?.child(0)?.child(0)?.child(0)?.child(0)?.text()?.trim()!!))) {
-//					createViewHolder = false
-//				} else {
+////				if (article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()!!.contains("hrs") || (titles.contains(article.get()?.get(i)?.child(0)?.child(0)?.child(0)?.child(0)?.child(0)?.text()?.trim()!!))) {
+////					createViewHolder = false
+////				} else {
 //					viewHolder.itemTitle.text = article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()
 //					var title: String? = article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()
 //					titles.add(title!!)
-//				}
+////				}
 //			} catch (e: Exception) {
 //				Log.w("No title for article $i", e)
 //				createViewHolder = false;
@@ -148,8 +158,15 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 					titles.add(title!!)
 				}
 			} catch (e: Exception) {
-				Log.w("No title for article $i", e)
-				createViewHolder = false;
+				try {
+					viewHolder.itemTitle.text = article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()
+					var title: String? = article.get()?.get(i)?.child(0)?.child(0)?.child(1)?.child(0)?.child(0)?.text()?.trim()
+					titles.add(title!!)
+				} catch (e: Exception) {
+					Log.w("No title for article $i", e)
+					Log.w("0 Child Node Size of Article $i", "${article.get()?.get(i)?.child(0)?.child(0)?.childNodeSize()}")
+					createViewHolder = false;
+				}
 			}
 		}
 
@@ -166,6 +183,8 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 			} catch (e: Exception) {
 				if (article.get()?.get(i)?.child(0)?.childNodeSize() == 3) {
 					viewHolder.itemDetail.text = article.get()?.get(i)?.child(0)?.child(0)?.child(2)?.child(0)?.text()?.trim();
+				} else if (article.get()?.get(i)?.child(0)?.childNodeSize() == 2) {
+					viewHolder.itemDetail.text = article.get()?.get(i)?.child(0)?.child(0)?.child(4)?.child(0)?.text()?.trim();
 				}
 			} catch (e: Exception) {
 				Log.e("Lead", "Supposedly this article has no lead...")
@@ -173,7 +192,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
 			//Images
 			try {
-				viewHolder.itemImage.setImageBitmap(images[viewHolder.adapterPosition])
+				viewHolder.itemImage.setImageBitmap(images[viewHolder.adapterPosition - 1])
 			} catch (e: Exception) {
 				Log.e("RecyclerView had a problem with the image.", "${e.stackTrace}")
 			}

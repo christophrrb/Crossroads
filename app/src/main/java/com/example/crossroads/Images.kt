@@ -45,26 +45,26 @@ import java.net.URL
 
 			try {
 				var x = 0
-				Log.e("Article Size", "${article.size}")
+				Log.w("Article Size", "${article.size}")
 				while (x < article.size) {
 					failed_image = x;
 					try {
 						if ((article[x].child(0).childNodeSize() == 4) && (article[x].child(0).child(0).child(0).child(0).child(0).child(0).childNodeSize() == 5)) {
 							var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(0).child(0).child(1).attr("data-srcset")
 							var url: URL = URL(data_srcset);
-							Log.e("Bitmap URL", "${url.toString()}")
+							Log.w("Bitmap URL", "${url.toString()}")
 							bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 							list.add(bmp)
 						} else if ((article[x].child(0).childNodeSize() == 4) && (article[x].child(0).child(0).child(0).child(0).child(0).child(0).childNodeSize() == 3)) {
 							var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(0).child(0).child(0).attr("data-srcset")
 							var url: URL = URL(data_srcset);
-							Log.e("Bitmap URL", "${url.toString()}")
+							Log.w("Bitmap URL", "${url.toString()}")
 							bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 							list.add(bmp)
 						} else if (article[x].child(0).child(0).childNodeSize() == 3) {
 							var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(0).child(0).child(0).attr("data-srcset")
 							var url: URL = URL(data_srcset);
-							Log.e("Bitmap URL", "${url.toString()}")
+							Log.w("Bitmap URL", "${url.toString()}")
 							bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 							list.add(bmp)
 						} else if (article[x].child(0).child(0).childNodeSize() == 7) {
@@ -76,20 +76,20 @@ import java.net.URL
 								try {
 									var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(0).child(0).child(0).attr("data-src")
 									var url: URL = URL(data_srcset);
-									Log.e("Bitmap URL", "${url.toString()}")
+									Log.w("Bitmap URL", "${url.toString()}")
 									bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 									list.add(bmp)
 								} catch (e: Exception) {
 									var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(0).child(0).child(1).attr("data-src")
 									var url: URL = URL(data_srcset);
-									Log.e("Bitmap URL", "${url.toString()}")
+									Log.w("Bitmap URL", "${url.toString()}")
 									bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 									list.add(bmp)
 								}
 							} else if (article[x].child(0).child(0).childNodeSize() == 3) {
 								var data_srcset: String = article[x].child(0).child(0).child(0).child(0).child(1).attr("data-srcset")
 								var url: URL = URL(data_srcset);
-								Log.e("Bitmap URL", "${url.toString()}")
+								Log.w("Bitmap URL", "${url.toString()}")
 								bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
 								list.add(bmp)
 							} else {
@@ -99,17 +99,17 @@ import java.net.URL
 							list.add(null)
 						}
 					}
-					Log.e("Value of x", "$x")
+					Log.w("Value of x", "$x")
 					var progg: Int = x / article.size
 					x++
 				}
-				Log.e("Bitmap Position", "${p0[0]} - p0")
+				Log.w("Bitmap Position", "${p0[0]} - p0")
 			} catch (e: Exception) {
-				Log.e("The image couldn't load because...", e.toString())
+				Log.w("The image couldn't load because...", e.toString())
 			}
 
 
-			Log.e("Bitmap Index", "This bitmap list has indices of ${list.indices} with its last index being ${list.lastIndex}")
+			Log.w("Bitmap Index", "This bitmap list has indices of ${list.indices} with its last index being ${list.lastIndex}")
 			return list;
 		}
 	}
